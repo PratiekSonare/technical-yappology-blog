@@ -2,13 +2,12 @@
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import Technical from "./technical";
-import './texteffect.css';
-import LifeBlogCard from "./components/LifeBlogCard";
-import TechBlogCard from "./components/TechBlogCard";
-import BookBlogCard from "./components/BookBlogCard";
-import TravelBlogCard from "./components/TravelBlogCard";
-import FoodBlogCard from "./components/FoodBlogCard";
+import '../texteffect.css';
+import LifeBlogCard from "../components/LifeBlogCard";
+import TechBlogCard from "../components/TechBlogCard";
+import BookBlogCard from "../components/BookBlogCard";
+import TravelBlogCard from "../components/TravelBlogCard";
+import FoodBlogCard from "../components/FoodBlogCard";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
@@ -80,55 +79,6 @@ export default function Home() {
     return () => window.removeEventListener('scroll', updateScrollProgress);
   }, []);
 
-  const handleLife = () => {
-    setAnimation("slide-out-right");
-    setTitleAnimation("slide-out-left");
-    setTimeout(() => {
-      setIndex(3);
-      setAnimation("slide-in-left");
-      setTitleAnimation("slide-in-right");
-    }, 300); // Duration matches animation
-  } 
-
-  const handleTech = () => {
-    setAnimation("slide-out-right");
-    setTitleAnimation("slide-out-left");
-    setTimeout(() => {
-      setIndex(2);
-      setAnimation("slide-in-left");
-      setTitleAnimation("slide-in-right");
-    }, 300); // Duration matches animation
-  }
-  
-  const handleTravel = () => {
-    setAnimation("slide-out-right");
-    setTitleAnimation("slide-out-left");
-    setTimeout(() => {
-      setIndex(4);
-      setAnimation("slide-in-left");
-      setTitleAnimation("slide-in-right");
-    }, 300); // Duration matches animation
-  } 
-
-  const handleBook = () => {
-    setAnimation("slide-out-right");
-    setTitleAnimation("slide-out-left");
-    setTimeout(() => {
-      setIndex(5);
-      setAnimation("slide-in-left");
-      setTitleAnimation("slide-in-right");
-    }, 300); // Duration matches animation
-  } 
-
-  const handleFood = () => {
-    setAnimation("slide-out-right");
-    setTitleAnimation("slide-out-left");
-    setTimeout(() => {
-      setIndex(1);
-      setAnimation("slide-in-left");
-      setTitleAnimation("slide-in-right");
-    }, 300); // Duration matches animation
-  } 
   return (
     <div>
 
@@ -170,21 +120,21 @@ export default function Home() {
           <main className="flex flex-col items-center justify-center">
             
             {/* content slider and title  */}
-            <div className="flex flex-col items-center justify-center mt-12" onWheel={handleScroll}>
+            <div className="flex flex-col items-center justify-center mt-12" onWheel={handleScroll} >
               <div className="flex flex-col justify-center items-center -mb-10">
                 {index === 3 ? <div className="bg-white rounded-full w-[10px] h-[10px] transition-all animate-pulse"></div> : <></>} 
-                <button style={{ color: '#8c52ff' }} className={`${index === 3 ? 'kumbh-sans-bold' : ''} text-[48px] ${textstyle}`} onClick={handleLife}>Life</button>
+                <span style={{ color: '#8c52ff' }} className={`${index === 3 ? 'kumbh-sans-bold' : ''} text-[48px] ${textstyle}`}>Life</span>
               </div>
               
               {/* First Row of Texts */}
               <div style={{ color: '#cb6ce6' }} className="flex flex-row gap-[250px] -mb-10 ml-5">
               <div className="flex flex-col justify-center items-center">
                   {index === 2 ? <div className="bg-white rounded-full w-[10px] h-[10px] transition-all animate-pulse"></div> : <></>} 
-                  <button className={`${index === 2 ? 'kumbh-sans-bold' : ''} ${textstyle}`} onClick={handleTech}>Tech</button>
+                  <span className={`${index === 2 ? 'kumbh-sans-bold' : ''} ${textstyle}`}>Tech</span>
               </div>
               <div className="flex flex-col justify-center items-center">
                   {index === 4 ? <div className="bg-white rounded-full w-[10px] h-[10px] transition-all animate-pulse"></div> : <></>} 
-                  <button className={`${index === 4 ? 'kumbh-sans-bold' : ''} ${textstyle}`} onClick={handleTravel}>Travel</button>
+                  <span className={`${index === 4 ? 'kumbh-sans-bold' : ''} ${textstyle}`}>Travel</span>
                 </div>
               </div>
               
@@ -198,11 +148,11 @@ export default function Home() {
               <div style={{ color: '#ff66c4' }} className="flex flex-row gap-[550px] -mt-[75px] ml-5">
                 <div className="flex flex-col justify-center items-center">
                     {index === 1 ? <div className="bg-white rounded-full w-[10px] h-[10px] transition-all animate-pulse"></div> : <></>} 
-                    <button className={`${index === 1 ? 'kumbh-sans-bold' : ''} ${textstyle}`} onClick={handleFood}>Food</button>
+                    <span className={`${index === 1 ? 'kumbh-sans-bold' : ''} ${textstyle}`}>Food</span>
                   </div>
                   <div className="flex flex-col justify-center items-center">
                     {index === 5 ? <div className="bg-white rounded-full w-[10px] h-[10px] transition-all animate-pulse"></div> : <></>} 
-                    <button className={`${index === 5 ? 'kumbh-sans-bold' : ''} ${textstyle}`} onClick={handleBook}>Books</button>
+                    <span className={`${index === 5 ? 'kumbh-sans-bold' : ''} ${textstyle}`}>Books</span>
                   </div>
               </div>
             </div>
