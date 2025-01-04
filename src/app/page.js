@@ -10,6 +10,7 @@ import BookBlogCard from "./components/BookBlogCard";
 import TravelBlogCard from "./components/TravelBlogCard";
 import FoodBlogCard from "./components/FoodBlogCard";
 import { useRouter } from "next/navigation";
+import Chatbot from "./components/Chatbot";
 
 export default function Home() {
 
@@ -370,6 +371,8 @@ export default function Home() {
             </div>
     
           </div>
+
+          <div className="flex my-[100px]"><Chatbot /></div>
         </main>
       </div>
     </div>
