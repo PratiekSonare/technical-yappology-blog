@@ -1,13 +1,16 @@
-// Note: Replace **<YOUR_APPLICATION_TOKEN>** with your actual Application token
+// pages/api/chat.js
+import fetch from 'node-fetch';
 
-export default class LangflowClient {
+class LangflowClient {
     constructor(baseURL, applicationToken) {
         this.baseURL = baseURL;
         this.applicationToken = applicationToken;
     }
-    async post(endpoint, body, headers = {"Content-Type": "application/json"}) {
-        headers["Authorization"] = `Bearer ${this.applicationToken}`;
-        headers["Content-Type"] = "application/json";
+    async post(endpoint, body, headers) {
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${this.applicationToken}`
+        };
         const url = `${this.baseURL}${endpoint}`;
         try {
             const response = await fetch(url, {
@@ -71,56 +74,60 @@ export default class LangflowClient {
     }
 }
 
-async function main(inputValue, inputType = 'chat', outputType = 'chat', stream = false) {
-    const flowIdOrName = '79a5a2d1-51a4-475c-81bd-91df81a82366';
-    const langflowId = '69313a1b-b1b9-4b4e-b4b7-2199eaf9b217';
-    const applicationToken = 'AstraCS:StzJXpLZbojHZcNZwRjZikJc:1173040489567396f985dbd39e8eae3876f72a065ec8d964cd90ccc38696af99';
-    const langflowClient = new LangflowClient('https://api.langflow.astra.datastax.com',
-        applicationToken);
+export default async function handler(req, res) {
+    if (req.method === 'POST') {
+        const { inputValue, inputType = 'chat', outputType = 'chat', stream = false } = req.body;
 
-    try {
-      const tweaks = {
-  "ChatInput-kd5LJ": {},
-  "ChatOutput-Cs5jk": {},
-  "Prompt-Qn9CW": {},
-  "Agent-UeA8R": {},
-  "AstraDB-FxgKv": {},
-  "ParseData-HeDd5": {},
-  "File-Ft8kh": {},
-  "SplitText-fUASN": {},
-  "AstraDB-3e1AA": {}
-};
-      response = await langflowClient.runFlow(
-          flowIdOrName,
-          langflowId,
-          inputValue,
-          inputType,
-          outputType,
-          tweaks,
-          stream,
-          (data) => console.log("Received:", data.chunk), // onUpdate
-          (message) => console.log("Stream Closed:", message), // onClose
-          (error) => console.log("Stream Error:", error) // onError
-      );
-      if (!stream && response && response.outputs) {
-          const flowOutputs = response.outputs[0];
-          const firstComponentOutputs = flowOutputs.outputs[0];
-          const output = firstComponentOutputs.outputs.message;
+        const flowIdOrName = '79a5a2d1-51a4-475c-81bd-91df81a82366';
+        const langflowId = '69313a1b-b1b9-4b4e-b4b7-2199eaf9b217';
+        const applicationToken = 'AstraCS:StzJXpLZbojHZcNZwRjZikJc:1173040489567396f985dbd39e8eae3876f72a065ec8d964cd90ccc38696af99';
 
-          console.log("Final Output:", output.message.text);
-      }
-    } catch (error) {
-      console.error('Main Error', error.message);
+        if (!flowIdOrName || !langflowId || !applicationToken) {
+            console.error('Missing configuration');
+            return res.status(500).json({ error: 'Server misconfiguration. Contact admin.' });
+        }
+
+        const langflowClient = new LangflowClient('https://api.langflow.astra.datastax.com', applicationToken);
+
+        try {
+
+            const tweaks = {
+                "ChatInput-kd5LJ": {},
+                "ChatOutput-Cs5jk": {},
+                "Prompt-Qn9CW": {},
+                "Agent-UeA8R": {},
+                "AstraDB-FxgKv": {},
+                "ParseData-HeDd5": {},
+                "File-Ft8kh": {},
+                "SplitText-fUASN": {},
+                "AstraDB-3e1AA": {}
+            }
+
+            const response = await langflowClient.runFlow(
+                flowIdOrName,
+                langflowId,
+                inputValue,
+                inputType,
+                outputType,
+                tweaks,
+                stream,
+                (data) => console.log("Received:", data.chunk),
+                (message) => console.log("Stream Closed:", message),
+                (error) => console.error("Stream Error:", error)
+            );
+
+            if (!stream && response?.outputs) {
+                const output = response.outputs[0]?.outputs[0]?.outputs?.message?.message?.text || 'No response available';
+                return res.status(200).json({ message: output });
+            }
+
+            return res.status(200).json(response);
+        } catch (error) {
+            console.error('Main Error:', error);
+            return res.status(500).json({ error: 'An unexpected error occurred.' });
+        }
+    } else {
+        res.setHeader('Allow', ['POST']);
+        res.status(405).end(`Method ${req.method} Not Allowed`);
     }
 }
-
-const args = process.argv.slice(2);
-if (args.length < 1) {
-  console.error('Please run the file with the message as an argument: node <YOUR_FILE_NAME>.js "user_message"');
-}
-main(
-  args[0], // inputValue
-  args[1], // inputType
-  args[2], // outputType
-  args[3] === 'true' // stream
-);
